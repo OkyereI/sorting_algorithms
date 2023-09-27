@@ -1,87 +1,87 @@
 #include "sort.h"
-#include <stdio.h>
+
+#define HEAP_PARENT_INDEX(node_index) (((node_index) - 1) / 2)
+#define HEAP_LCHILD_INDEX(node_index) (((node_index) * 2) + 1)
+#define HEAP_RCHILD_INDEX(node_index) (((node_index) * 2) + 2)
 
 /**
- * swap - utility function to swap to integers
- * @a: integer a
- * @b: integer b
- **/
-void swap(int *a, int *b)
+ * pswap - swap elements and print array
+ *
+ * @array: pointer to the array
+ * @size: sizeo of the array
+ * @i: index of element to swap
+ * @j: index of element to swap
+ */
+static void pswap(int *array, size_t size, size_t i, size_t j)
 {
-	int t = *a;
-
-	*a = *b;
-	*b = t;
+	array[i] ^= array[j];
+	array[j] ^= array[i];
+	array[i] ^= array[j];
+	print_array(array, size);
 }
 
 /**
- * maxHeapify - The main function to heapify a Max Heap. The function
- * assumes that everything under given root (element at index idx)
- * is already heapified
- * @array: array
- * @size: size of the array for print
- * @idx: index
- * @n: size of the array to run
+ * sift_down - repair a max-heap rooted at the parent of valid max-heaps
+ *
+ * @array: pointer to the array
+ * @size: size of the array
+ * @start: index of the root of the heap to repair
+ * @end: index of the last heap element
  */
-void maxHeapify(int *array, size_t size, int idx, size_t n)
+static void sift_down(int *array, size_t size, size_t start, size_t end)
 {
-	int largest = idx;		 /* Initialize largest as root*/
-	int left = 2 * idx + 1;	 /* left = (idx << 1) + 1*/
-	int right = 2 * idx + 2; /* right = (idx + 1) << 1*/
+	size_t root = start;
+	size_t swap = root;
+	size_t lchild = 0;
+	size_t rchild = 0;
 
-	/* See if left child of root exists and is greater than root*/
-	if (left < (int)n && array[left] > array[largest])
-		largest = left;
-
-	/**
-	 * See if right child of root exists and is greater than
-     *the largest so far
-	 */
-	if (right < (int)n && array[right] > array[largest])
-		largest = right;
-
-	/* Change root, if needed*/
-	if (largest != idx)
+	while (HEAP_LCHILD_INDEX(root) <= end)
 	{
-		swap(&array[idx], &array[largest]);
-		print_array(array, size);
-		maxHeapify(array, size, largest, n);
+		lchild = HEAP_LCHILD_INDEX(root);
+		rchild = HEAP_RCHILD_INDEX(root);
+		if (array[swap] < array[lchild])
+			swap = lchild;
+		if (rchild <= end && array[swap] < array[rchild])
+			swap = rchild;
+		if (swap == root)
+			return;
+		pswap(array, size, root, swap);
+		root = swap;
 	}
 }
 
 /**
- * heap_sort -  The main function to sort an array of given size
- * @array: array to sort
+ * heapify - construct a max-heap
+ *
+ * @array: pointer to the array
  * @size: size of the array
- **/
+ */
+static void heapify(int *array, size_t size)
+{
+	size_t end = size - 1;
+	size_t start = HEAP_PARENT_INDEX(end);
+
+	while (start < end)
+		sift_down(array, size, start--, end);
+}
+
+/**
+ * heap_sort - sort an array in ascending order
+ *
+ * @array: pointer to the array
+ * @size: size of the array
+ */
 void heap_sort(int *array, size_t size)
 {
-	int i;
-	/**
-	 * Start from bottommost and rightmost internal mode and heapify all
-     * internal modes in bottom up way
-	 */
-	if (array == '\0' || size < 2)
-		return;
+	size_t end = size - 1;
 
-	for (i = (size - 2) / 2; i >= 0; --i)
-		maxHeapify(array, size, i, size);
-
-	/**
-	* Repeat following steps while heap size is greater than 1.
-    * The last element in max heap will be the minimum element
-	*/
-	for (i = (size - 1); i > 0; --i)
+	if (array && size)
 	{
-		/**
-		* The largest item in Heap is stored at the root. Replace
-		*it with the last item of the heap followed by reducing the
-		*size of heap by 1.
-		*/
-		swap(&array[0], &array[i]);
-		print_array(array, size);
-
-		/* Finally, heapify the root of tree.*/
-		maxHeapify(array, size, 0, i);
+		heapify(array, size);
+		while (end > 0)
+		{
+			pswap(array, size, 0, end--);
+			sift_down(array, size, 0, end);
+		}
 	}
 }
