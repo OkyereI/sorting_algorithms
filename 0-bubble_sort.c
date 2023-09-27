@@ -1,25 +1,34 @@
 #include "sort.h"
+
 /**
- * bubble_sort - sort array lements from min to max value
- * @array: array
- * @size: array size
+ * bubble_sort - A type of sorting algorithm
+ * @array: The array of integers to be sorted
+ * @size: The length of the array
  */
 void bubble_sort(int *array, size_t size)
 {
+	size_t count, idx;	/* count = outer loop count; idx = inner loop position; */
+	int tmp, flag;	/* tmp = used for swapping; flag = check if sorted */
 
-	size_t i, index, tmp = 0;
-
-	if (size < 2)
+	if (size < 2)	/* array does not need to be sorted if length is less than 2 */
 		return;
-	for (i = 0; i < size; i++)
-		for (index = 0; index < size; index++)
+
+	for (count = 0; count < size; count++)
+	{
+		flag = 0;	/* reset flag to compare if run through needed a sort */
+		for (idx = 0; idx < size - 1; idx++)
 		{
-			if (array[index] > array[index + 1] && array[index + 1])
+			if (array[idx] > array[idx + 1]) /* compares ints in array */
 			{
-			tmp = array[index];
-			array[index] = array[index + 1];
-			array[index + 1] = tmp;
-			print_array(array, size);
+				tmp = array[idx];
+				array[idx] = array[idx + 1];
+				array[idx + 1] = tmp;
+				print_array(array, size);
+				flag = 1;	/* Raises flag to say a swap has been made */
 			}
 		}
+
+		if (flag == 0) /* if last run through didn't need to be sorted-> end. */
+			return;
+	}
 }
