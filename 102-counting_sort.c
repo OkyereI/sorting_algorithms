@@ -27,24 +27,24 @@ void *_calloc(unsigned int nmemb, unsigned int size)
  */
 void counting_sort(int *array, size_t size)
 {
-	int index, maximun = 0, *counter = '\0', *tmp = '\0';
+	int index, maximum = 0, *counter = '\0', *tmp = '\0';
 	size_t i;
 
 	if (array == '\0' || size < 2)
 		return;
-	/* find maximun number */
+	/* find maximum number */
 	for (i = 0; i < size; i++)
-		if (array[i] > maximun)
-			maximun = array[i];
-	counter = _calloc(maximun + 1, sizeof(int));
+		if (array[i] > maximum)
+			maximum = array[i];
+	counter = _calloc(maximum + 1, sizeof(int));
 	tmp = _calloc(size + 1, sizeof(int));
 	/* count the array elements */
 	for (i = 0; i < size; i++)
 		counter[array[i]]++;
 	/* get the accumulative values */
-	for (index = 1; index <= maximun; index++)
+	for (index = 1; index <= maximum; index++)
 		counter[index] += counter[index - 1];
-	print_array(counter, maximun + 1);
+	print_array(counter, maximum + 1);
 	/* get the new array sorted */
 	for (i = 0; i < size; ++i)
 	{
